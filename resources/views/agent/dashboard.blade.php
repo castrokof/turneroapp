@@ -364,12 +364,76 @@
             });
     }
 
-    // Auto-refresh pending list every 10 seconds
-    setInterval(function() {
+    // Auto-refresh pending list every 5 seconds
+    function refreshPendingList() {
         $.get('{{ route("agent.pending-queues") }}')
             .done(function(response) {
                 $('#pendingCount').text(response.count);
+
+                // Rebuild the pending list
+                let html = '';
+                if (response.queues.length === 0) {
+                    html = `<li class="list-group-item text-center text-muted py-5">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <br>No hay turnos pendientes
+                    </li>`;
+                } else {
+                    response.queues.forEach(function(queue) {
+                        const priorityBadge = queue.priority !== 'normal'
+                            ? `<span class="badge badge-${getPriorityColor(queue.priority)} ml-2">${getPriorityLabel(queue.priority)}</span>`
+                            : '';
+                        const clientInfo = queue.client
+                            ? `<br><small class="text-muted">${queue.client.first_name} ${queue.client.last_name}</small>`
+                            : '';
+                        const createdAt = new Date(queue.created_at);
+                        const timeStr = createdAt.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+                        const diffMinutes = Math.floor((Date.now() - createdAt) / 60000);
+                        const diffStr = diffMinutes < 1 ? 'ahora' : `hace ${diffMinutes} min`;
+
+                        html += `<li class="list-group-item queue-item d-flex justify-content-between align-items-center"
+                            onclick="callSpecific(${queue.id})">
+                            <div>
+                                <strong style="color: ${queue.service_type.color}">${queue.ticket_number}</strong>
+                                <small class="text-muted ml-2">${queue.service_type.prefix}</small>
+                                ${priorityBadge}
+                                ${clientInfo}
+                            </div>
+                            <div class="text-right">
+                                <small class="text-muted">${timeStr}</small>
+                                <br>
+                                <small class="text-muted">${diffStr}</small>
+                            </div>
+                        </li>`;
+                    });
+                }
+                $('#pendingList').html(html);
             });
-    }, 10000);
+    }
+
+    function getPriorityColor(priority) {
+        const colors = {
+            'emergency': 'danger',
+            'priority': 'warning',
+            'scheduled': 'info',
+            'normal': 'secondary'
+        };
+        return colors[priority] || 'secondary';
+    }
+
+    function getPriorityLabel(priority) {
+        const labels = {
+            'emergency': 'Emergencia',
+            'priority': 'Prioritario',
+            'scheduled': 'Programado',
+            'normal': 'Normal'
+        };
+        return labels[priority] || priority;
+    }
+
+    // Refresh every 5 seconds
+    setInterval(refreshPendingList, 5000);
+
+    // Also refresh immediately on page load after 1 second
+    setTimeout(refreshPendingList, 1000);
 </script>
 @endpush

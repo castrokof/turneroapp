@@ -31,7 +31,6 @@ class DashboardController extends Controller
                 });
             })
             ->orderByPriority()
-            ->limit(20)
             ->get();
 
         $todayStats = [
@@ -348,7 +347,6 @@ class DashboardController extends Controller
             })
             ->with(['client', 'serviceType'])
             ->orderByPriority()
-            ->limit(20)
             ->get();
 
         return response()->json([
