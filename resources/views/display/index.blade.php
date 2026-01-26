@@ -198,7 +198,7 @@
         <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
     </audio>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
     <script>
         const REFRESH_RATE = {{ $settings['refresh_rate'] }};
         const SHOW_NEXT = {{ $settings['show_next'] }};
