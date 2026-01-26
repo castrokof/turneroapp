@@ -6,6 +6,7 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\CapabilityProfile;
+use App\Models\SystemSetting;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -104,10 +105,11 @@ class PrinterService
             // DISEÑO OPTIMIZADO PARA POS-80 (80mm)
             // ========================================
 
-            // Logo / Nombre del negocio
+            // Logo / Nombre del negocio (desde configuración en BD)
+            $businessName = SystemSetting::get('business_name', 'Sistema de Turnos');
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setTextSize(2, 2);
-            $printer->text($this->sanitizeText(config('app.name', 'Sistema de Turnos')) . "\n");
+            $printer->text($this->sanitizeText($businessName) . "\n");
             $printer->setTextSize(1, 1);
             $printer->text(now()->format('d/m/Y') . '  ' . now()->format('H:i:s') . "\n");
             $printer->feed();
@@ -151,7 +153,7 @@ class PrinterService
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("================================\n");
             $printer->text("  GRACIAS POR SU PACIENCIA!\n");
-            $printer->text("  Espere visualizacion en TV\n");
+            $printer->text("  Espere visualizacion en TV.\n");
             $printer->text("================================\n");
             $printer->feed(4);
 

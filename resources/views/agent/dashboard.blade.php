@@ -132,6 +132,31 @@
                 </div>
             </div>
         </div>
+          <!-- Queue Summary by Service -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <i class="fas fa-layer-group mr-2"></i>Resumen de Turnos por Servicio
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush" id="queueSummaryList">
+                    @forelse($queueSummary as $summary)
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge mr-2" style="background-color: {{ $summary['color'] }}; color: white;">
+                                    {{ $summary['prefix'] }}
+                                </span>
+                                {{ $summary['name'] }}
+                            </div>
+                            <span class="badge badge-primary badge-pill">{{ $summary['total'] }}</span>
+                        </li>
+                    @empty
+                        <li class="list-group-item text-center text-muted">
+                            <i class="fas fa-inbox mr-2"></i>Sin turnos pendientes
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- Pending Queue -->

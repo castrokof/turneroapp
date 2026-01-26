@@ -39,7 +39,25 @@ class DashboardController extends Controller
             'avg_time' => Queue::today()->where('agent_id', $user->id)->whereNotNull('service_time')->avg('service_time'),
         ];
 
-        return view('agent.dashboard', compact('window', 'currentQueue', 'pendingQueues', 'todayStats'));
+        //return view('agent.dashboard', compact('window', 'currentQueue', 'pendingQueues', 'todayStats'));
+
+         // Queue summary by service type
+        $queueSummary = Queue::today()
+            ->pending()
+            ->selectRaw('service_type_id, COUNT(*) as total')
+            ->groupBy('service_type_id')
+            ->with('serviceType')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'name' => $item->serviceType->name ?? 'Sin tipo',
+                    'prefix' => $item->serviceType->prefix ?? '-',
+                    'color' => $item->serviceType->color ?? '#6c757d',
+                    'total' => $item->total,
+                ];
+            });
+
+            return view('agent.dashboard', compact('window', 'currentQueue', 'pendingQueues', 'todayStats', 'queueSummary'));
     }
 
     public function selectWindow(Request $request)
@@ -349,9 +367,26 @@ class DashboardController extends Controller
             ->orderByPriority()
             ->get();
 
+        // Queue summary by service type
+        $summary = Queue::today()
+            ->pending()
+            ->selectRaw('service_type_id, COUNT(*) as total')
+            ->groupBy('service_type_id')
+            ->with('serviceType')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'name' => $item->serviceType->name ?? 'Sin tipo',
+                    'prefix' => $item->serviceType->prefix ?? '-',
+                    'color' => $item->serviceType->color ?? '#6c757d',
+                    'total' => $item->total,
+                ];
+            });
+ 
         return response()->json([
             'queues' => $queues,
             'count' => $queues->count(),
+            'summary' => $summary,
         ]);
     }
 
