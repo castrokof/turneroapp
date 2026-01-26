@@ -73,6 +73,8 @@ class ReportController extends Controller
 
     public function export(Request $request)
     {
+
+
         $validated = $request->validate([
             'date_from' => 'required|date',
             'date_to' => 'required|date|after_or_equal:date_from',

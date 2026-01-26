@@ -73,7 +73,7 @@
                     </button>
                 </div>
                 <div class="col-md-3 mb-3 d-flex align-items-end">
-                    <a href="{{ route('admin.reports.export', request()->query()) }}" class="btn btn-success btn-block">
+                    <a class="btn btn-success btn-block" onclick="exportReport()">
                         <i class="fas fa-file-excel mr-1"></i>Exportar CSV
                     </a>
                 </div>
@@ -246,6 +246,20 @@
             }
         });
     });
+
+    function exportReport() {
+    const params = new URLSearchParams({
+        date_from: document.getElementById('date_from').value,
+        date_to: document.getElementById('date_to').value,
+        service_type_id: document.getElementById('service_type_id').value || '',
+        agent_id: document.getElementById('agent_id').value || '',
+        service_window_id: document.getElementById('service_window_id').value || '',
+        status: document.getElementById('status').value || '',
+        format: 'csv'
+    });
+    
+    window.location.href = '{{ route("admin.reports.export") }}?' + params.toString();
+}
 </script>
 @endpush
 @endisset
