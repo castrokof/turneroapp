@@ -326,15 +326,13 @@
                     
                     // Pasar al step 3
                     goToStep(3);
-                    
-                    // // Imprimir automáticamente después de un breve delay
-                    // setTimeout(function() {
-                    //     printTicket();
-                        
-                    //     // Iniciar cuenta regresiva
-                        
-                    // }, 1000);
 
+                    // Imprimir automáticamente después de un breve delay
+                    setTimeout(function() {
+                        printTicket();
+                    }, 500);
+
+                    // Iniciar cuenta regresiva
                     startCountdown();
                 }
             })
@@ -380,36 +378,30 @@
             }
         }
 
-        // function printTicket() {
-        //     if (generatedQueueId) {
-        //         // Crear iframe oculto para impresión silenciosa
-        //         const iframe = document.createElement('iframe');
-        //         iframe.style.display = 'none';
-        //         iframe.name = 'printFrame';
-        //         document.body.appendChild(iframe);
-                
-        //         // Abrir documento en iframe
-        //         const printWindow = iframe.contentWindow || iframe;
-                
-        //         // Cargar la página de impresión
-        //         $.get(`/queue/${generatedQueueId}/print`, function(html) {
-        //             // Escribir HTML en el iframe
-        //             printWindow.document.write(html);
-        //             printWindow.document.close();
-                    
-        //             // Esperar a que carguen los estilos y luego imprimir
-        //             setTimeout(function() {
-        //                 printWindow.focus();
-        //                 printWindow.print();
-                        
-        //                 // Cerrar iframe después de imprimir
-        //                 setTimeout(function() {
-        //                     document.body.removeChild(iframe);
-        //                 }, 500);
-        //             }, 500);
-        //         });
-        //     }
-        // }
+        function printTicket() {
+            if (generatedQueueId) {
+                // Crear iframe oculto para impresión silenciosa
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'absolute';
+                iframe.style.top = '-9999px';
+                iframe.style.left = '-9999px';
+                iframe.style.width = '80mm';
+                iframe.style.height = '200mm';
+                iframe.name = 'printFrame_' + Date.now();
+                document.body.appendChild(iframe);
+
+                // Cargar la página de impresión en el iframe
+                iframe.src = `/queue/${generatedQueueId}/print`;
+
+                // El iframe se imprimirá automáticamente (tiene window.print() en onload)
+                // Remover el iframe después de un tiempo
+                setTimeout(function() {
+                    if (iframe.parentNode) {
+                        document.body.removeChild(iframe);
+                    }
+                }, 5000);
+            }
+        }
 
         function startCountdown() {
             let seconds = 10;
