@@ -46,7 +46,7 @@ class DashboardController extends Controller
 
         // Queues by hour (for chart)
         $queuesByHour = Queue::whereDate('queue_date', $today)
-            ->selectRaw('STRFTIME("%H", created_at) as hour, COUNT(*) as count')
+            ->selectRaw('HOUR(created_at) as hour, COUNT(*) as count')
             ->groupBy('hour')
             ->orderBy('hour')
             ->pluck('count', 'hour')

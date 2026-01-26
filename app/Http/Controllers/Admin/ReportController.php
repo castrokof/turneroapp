@@ -258,7 +258,7 @@ class ReportController extends Controller
     private function chartByHour($dateFrom, $dateTo)
     {
         $data = Queue::whereBetween('queue_date', [$dateFrom, $dateTo])
-            ->selectRaw('STRFTIME("%H", created_at) as hour, COUNT(*) as count')
+            ->selectRaw('HOUR(created_at) as hour, COUNT(*) as count')
             ->groupBy('hour')
             ->orderBy('hour')
             ->pluck('count', 'hour')
