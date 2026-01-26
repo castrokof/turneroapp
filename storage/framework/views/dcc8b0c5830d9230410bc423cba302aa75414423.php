@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Generar Turno - {{ $settings['business_name'] }}</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title>Generar Turno - <?php echo e($settings['business_name']); ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -169,7 +169,7 @@
             top: 1rem;
             left: 1rem;
         }
-        @keyframes pulse {
+        @keyframes  pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
@@ -187,7 +187,7 @@
 <body>
     <div class="kiosk-container">
         <div class="kiosk-header">
-            <h1><i class="fas fa-ticket-alt mr-3"></i>{{ $settings['business_name'] }}</h1>
+            <h1><i class="fas fa-ticket-alt mr-3"></i><?php echo e($settings['business_name']); ?></h1>
             <p>Seleccione el servicio que necesita</p>
         </div>
 
@@ -206,18 +206,18 @@
                 <div id="step1" class="active">
                     <h3 class="text-center mb-4">Seleccione el Servicio</h3>
                     <div class="service-grid">
-                        @foreach($serviceTypes as $service)
-                            <button type="button" class="service-btn" style="background-color: {{ $service->color }}"
-                                    onclick="selectService({{ $service->id }}, '{{ $service->name }}', '{{ $service->color }}')"
-                                    {{ $service->isDailyLimitReached() ? 'disabled' : '' }}>
-                                <span class="prefix">{{ $service->prefix }}</span>
-                                <span class="name">{{ $service->name }}</span>
-                                <span class="time"><i class="fas fa-clock mr-1"></i>~{{ $service->estimated_time }} min</span>
-                                @if($service->isDailyLimitReached())
+                        <?php $__currentLoopData = $serviceTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <button type="button" class="service-btn" style="background-color: <?php echo e($service->color); ?>"
+                                    onclick="selectService(<?php echo e($service->id); ?>, '<?php echo e($service->name); ?>', '<?php echo e($service->color); ?>')"
+                                    <?php echo e($service->isDailyLimitReached() ? 'disabled' : ''); ?>>
+                                <span class="prefix"><?php echo e($service->prefix); ?></span>
+                                <span class="name"><?php echo e($service->name); ?></span>
+                                <span class="time"><i class="fas fa-clock mr-1"></i>~<?php echo e($service->estimated_time); ?> min</span>
+                                <?php if($service->isDailyLimitReached()): ?>
                                     <small class="mt-2"><i class="fas fa-ban"></i> Cupos agotados</small>
-                                @endif
+                                <?php endif; ?>
                             </button>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
 
@@ -271,7 +271,7 @@
         </div>
 
         <div class="text-center mt-3">
-            <a href="{{ route('display.index') }}" class="text-white">
+            <a href="<?php echo e(route('display.index')); ?>" class="text-white">
                 <i class="fas fa-tv mr-1"></i> Ver Pantalla de Turnos
             </a>
         </div>
@@ -312,7 +312,7 @@
             `);
 
             // Generate ticket
-            $.post('{{ route("queue.store") }}', {
+            $.post('<?php echo e(route("queue.store")); ?>', {
                 service_type_id: selectedService,
                 priority: priority
             })
@@ -442,4 +442,4 @@
         }
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\turnero_app\turneroapp\resources\views/display/kiosk.blade.php ENDPATH**/ ?>

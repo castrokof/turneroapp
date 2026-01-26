@@ -130,3 +130,5 @@ Route::prefix('agent')->name('agent.')->middleware(['auth', 'role:admin,agent'])
     Route::get('/pending-queues', [AgentDashboardController::class, 'getPendingQueues'])->name('pending-queues');
     Route::get('/current-status', [AgentDashboardController::class, 'getCurrentStatus'])->name('current-status');
 });
+
+
