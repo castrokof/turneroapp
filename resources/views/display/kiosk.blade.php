@@ -327,10 +327,8 @@
                     // Pasar al step 3
                     goToStep(3);
 
-                    // Imprimir automáticamente después de un breve delay
-                    setTimeout(function() {
-                        printTicket();
-                    }, 500);
+                    // La impresión se hace automáticamente desde el servidor (PrinterService)
+                    // No necesitamos imprimir desde el navegador
 
                     // Iniciar cuenta regresiva
                     startCountdown();
