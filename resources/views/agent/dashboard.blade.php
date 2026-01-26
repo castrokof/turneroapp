@@ -137,11 +137,24 @@
     <!-- Pending Queue -->
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-list mr-2"></i>Turnos Pendientes</span>
-                <span class="badge badge-primary" id="pendingCount">{{ $pendingQueues->count() }}</span>
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span><i class="fas fa-list mr-2"></i>Turnos Pendientes</span>
+                    <span class="badge badge-primary" id="pendingCount">{{ $pendingQueues->count() }}</span>
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    </div>
+                    <input type="text" id="searchQueue" class="form-control" placeholder="Buscar turno (ej: A-001, nombre cliente...)">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+            <div class="card-body p-0" style="max-height: 450px; overflow-y: auto;">
                 <ul class="list-group list-group-flush" id="pendingList">
                     @forelse($pendingQueues as $queue)
                         <li class="list-group-item queue-item d-flex justify-content-between align-items-center"
@@ -233,6 +246,7 @@
 <script>
     let timerInterval = null;
     let startTime = @json($currentQueue && $currentQueue->started_at ? $currentQueue->started_at->timestamp : null);
+    let allQueues = []; // Store all queues for filtering
 
     function updateTimer() {
         if (!startTime) return;
@@ -247,6 +261,38 @@
     if (startTime) {
         updateTimer();
         timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Search functionality
+    $('#searchQueue').on('input', function() {
+        const searchTerm = $(this).val().toLowerCase().trim();
+        filterQueues(searchTerm);
+    });
+
+    function clearSearch() {
+        $('#searchQueue').val('');
+        filterQueues('');
+    }
+
+    function filterQueues(searchTerm) {
+        if (!searchTerm) {
+            renderQueueList(allQueues);
+            return;
+        }
+
+        const filtered = allQueues.filter(queue => {
+            const ticketNumber = queue.ticket_number.toLowerCase();
+            const clientName = queue.client
+                ? `${queue.client.first_name} ${queue.client.last_name}`.toLowerCase()
+                : '';
+            const serviceName = queue.service_type.name.toLowerCase();
+
+            return ticketNumber.includes(searchTerm) ||
+                   clientName.includes(searchTerm) ||
+                   serviceName.includes(searchTerm);
+        });
+
+        renderQueueList(filtered);
     }
 
     function callNext() {
@@ -364,49 +410,69 @@
             });
     }
 
+    // Render queue list from array
+    function renderQueueList(queues) {
+        let html = '';
+        if (queues.length === 0) {
+            const searchTerm = $('#searchQueue').val();
+            if (searchTerm) {
+                html = `<li class="list-group-item text-center text-muted py-4">
+                    <i class="fas fa-search fa-2x mb-2"></i>
+                    <br>No se encontraron turnos con "${searchTerm}"
+                </li>`;
+            } else {
+                html = `<li class="list-group-item text-center text-muted py-5">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <br>No hay turnos pendientes
+                </li>`;
+            }
+        } else {
+            queues.forEach(function(queue) {
+                const priorityBadge = queue.priority !== 'normal'
+                    ? `<span class="badge badge-${getPriorityColor(queue.priority)} ml-2">${getPriorityLabel(queue.priority)}</span>`
+                    : '';
+                const clientInfo = queue.client
+                    ? `<br><small class="text-muted">${queue.client.first_name} ${queue.client.last_name}</small>`
+                    : '';
+                const createdAt = new Date(queue.created_at);
+                const timeStr = createdAt.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+                const diffMinutes = Math.floor((Date.now() - createdAt) / 60000);
+                const diffStr = diffMinutes < 1 ? 'ahora' : `hace ${diffMinutes} min`;
+
+                html += `<li class="list-group-item queue-item d-flex justify-content-between align-items-center"
+                    onclick="callSpecific(${queue.id})">
+                    <div>
+                        <strong style="color: ${queue.service_type.color}">${queue.ticket_number}</strong>
+                        <small class="text-muted ml-2">${queue.service_type.prefix}</small>
+                        ${priorityBadge}
+                        ${clientInfo}
+                    </div>
+                    <div class="text-right">
+                        <small class="text-muted">${timeStr}</small>
+                        <br>
+                        <small class="text-muted">${diffStr}</small>
+                    </div>
+                </li>`;
+            });
+        }
+        $('#pendingList').html(html);
+    }
+
     // Auto-refresh pending list every 5 seconds
     function refreshPendingList() {
         $.get('{{ route("agent.pending-queues") }}')
             .done(function(response) {
+                console.log('Total turnos pendientes:', response.count); // Debug log
+                allQueues = response.queues;
                 $('#pendingCount').text(response.count);
 
-                // Rebuild the pending list
-                let html = '';
-                if (response.queues.length === 0) {
-                    html = `<li class="list-group-item text-center text-muted py-5">
-                        <i class="fas fa-check-circle fa-2x mb-2"></i>
-                        <br>No hay turnos pendientes
-                    </li>`;
+                // Apply current search filter
+                const searchTerm = $('#searchQueue').val().toLowerCase().trim();
+                if (searchTerm) {
+                    filterQueues(searchTerm);
                 } else {
-                    response.queues.forEach(function(queue) {
-                        const priorityBadge = queue.priority !== 'normal'
-                            ? `<span class="badge badge-${getPriorityColor(queue.priority)} ml-2">${getPriorityLabel(queue.priority)}</span>`
-                            : '';
-                        const clientInfo = queue.client
-                            ? `<br><small class="text-muted">${queue.client.first_name} ${queue.client.last_name}</small>`
-                            : '';
-                        const createdAt = new Date(queue.created_at);
-                        const timeStr = createdAt.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
-                        const diffMinutes = Math.floor((Date.now() - createdAt) / 60000);
-                        const diffStr = diffMinutes < 1 ? 'ahora' : `hace ${diffMinutes} min`;
-
-                        html += `<li class="list-group-item queue-item d-flex justify-content-between align-items-center"
-                            onclick="callSpecific(${queue.id})">
-                            <div>
-                                <strong style="color: ${queue.service_type.color}">${queue.ticket_number}</strong>
-                                <small class="text-muted ml-2">${queue.service_type.prefix}</small>
-                                ${priorityBadge}
-                                ${clientInfo}
-                            </div>
-                            <div class="text-right">
-                                <small class="text-muted">${timeStr}</small>
-                                <br>
-                                <small class="text-muted">${diffStr}</small>
-                            </div>
-                        </li>`;
-                    });
+                    renderQueueList(allQueues);
                 }
-                $('#pendingList').html(html);
             });
     }
 
@@ -433,7 +499,9 @@
     // Refresh every 5 seconds
     setInterval(refreshPendingList, 5000);
 
-    // Also refresh immediately on page load after 1 second
-    setTimeout(refreshPendingList, 1000);
+    // Refresh immediately on page load
+    $(document).ready(function() {
+        refreshPendingList();
+    });
 </script>
 @endpush
