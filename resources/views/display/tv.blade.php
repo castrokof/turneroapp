@@ -15,169 +15,328 @@
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .container-fluid {
+
+        /* Main container */
+        .tv-container {
             height: 100vh;
-            padding: 0;
-        }
-        .row {
-            height: 100%;
-            margin: 0;
-        }
-        .left-panel {
-            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
-            padding: 2rem;
             display: flex;
             flex-direction: column;
         }
-        .right-panel {
+
+        /* Video/Content Area - Takes most of the screen */
+        .video-area {
+            flex: 1;
+            position: relative;
             background: #111;
-            padding: 1rem;
             display: flex;
-            flex-direction: column;
-        }
-        .header-info {
-            text-align: center;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid rgba(255,255,255,0.2);
-            margin-bottom: 2rem;
-        }
-        .header-info h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .header-info .clock {
-            font-size: 3rem;
-            font-family: monospace;
-        }
-        .current-turn-display {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-        }
-        .current-turn-display .label {
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            opacity: 0.8;
-            margin-bottom: 1rem;
-        }
-        .current-turn-display .ticket-number {
-            font-size: 12rem;
-            font-weight: 900;
-            line-height: 1;
-            text-shadow: 0 0 50px rgba(255,255,255,0.5);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(255,255,255,0.3); }
-            to { text-shadow: 0 0 60px rgba(255,255,255,0.8); }
-        }
-        .current-turn-display .window-info {
-            font-size: 3rem;
-            margin-top: 2rem;
-            color: #ffc107;
-        }
-        .next-turns-header {
-            background: #222;
-            padding: 1rem;
-            text-align: center;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-        .next-turns-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-        .next-turns-list {
-            flex: 1;
+            justify-content: center;
             overflow: hidden;
         }
-        .next-turn-item {
-            background: #222;
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 0.8rem;
+
+        .video-area video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-area .placeholder-content {
+            text-align: center;
+            color: #666;
+        }
+
+        .video-area .placeholder-content i {
+            font-size: 8rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-area .placeholder-content p {
+            font-size: 1.5rem;
+        }
+
+        /* Header overlay on video */
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 10;
         }
-        .next-turn-item .ticket {
-            font-size: 2rem;
+
+        .header-overlay .business-name {
+            font-size: 1.8rem;
             font-weight: bold;
         }
-        .next-turn-item .service {
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
+
+        .header-overlay .clock {
+            font-size: 2rem;
+            font-family: monospace;
         }
-        .windows-strip {
+
+        /* Queue strip at bottom */
+        .queue-strip {
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .queue-strip-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            white-space: nowrap;
+            padding-right: 1rem;
+            border-right: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .queue-strip-title i {
+            margin-right: 0.5rem;
+        }
+
+        .queue-items {
             display: flex;
             gap: 1rem;
-            padding: 1rem;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            margin-top: auto;
-        }
-        .window-mini {
             flex: 1;
-            background: #333;
-            border-radius: 8px;
-            padding: 0.8rem;
-            text-align: center;
+            overflow: hidden;
         }
-        .window-mini.active {
-            background: #28a745;
+
+        .queue-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 150px;
         }
-        .window-mini .name {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        .window-mini .ticket {
-            font-size: 1.5rem;
+
+        .queue-item .number {
+            font-size: 1.8rem;
             font-weight: bold;
         }
-        .no-queue {
-            opacity: 0.5;
+
+        .queue-item .service-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
         }
-        .no-queue i {
-            font-size: 6rem;
-            margin-bottom: 2rem;
+
+        .no-queue-message {
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+        }
+
+        /* Windows being served */
+        .windows-serving {
+            display: flex;
+            gap: 0.8rem;
+            margin-left: auto;
+            padding-left: 1rem;
+            border-left: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .window-badge {
+            background: #28a745;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .window-badge .window-name {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .window-badge .window-ticket {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .window-badge.inactive {
+            background: #444;
+        }
+
+        /* MODAL for turn call */
+        .turn-call-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .turn-call-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .turn-call-content {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+            border-radius: 30px;
+            padding: 4rem 6rem;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(30, 60, 114, 0.8);
+            animation: scaleIn 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .turn-call-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .turn-call-content .label {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .turn-call-content .ticket-number {
+            font-size: 14rem;
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 0 0 50px rgba(255,255,255,0.5);
+            animation: pulse 1s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .turn-call-content .window-info {
+            font-size: 3.5rem;
+            margin-top: 2rem;
+            color: #ffc107;
+            position: relative;
+            z-index: 1;
+        }
+
+        .turn-call-content .window-info i {
+            margin-right: 1rem;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .turn-call-content .countdown {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            font-size: 1.5rem;
+            opacity: 0.6;
+        }
+
+        /* Service type indicator */
+        .turn-call-content .service-type {
+            margin-top: 1.5rem;
+            padding: 0.5rem 2rem;
+            border-radius: 30px;
+            font-size: 1.5rem;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8 left-panel">
-                <div class="header-info">
-                    <h1><i class="fas fa-hospital mr-2"></i>{{ $settings['business_name'] }}</h1>
-                    <div class="clock" id="clock">--:--:--</div>
+    <div class="tv-container">
+        <!-- Main Video/Content Area -->
+        <div class="video-area">
+            <!-- Header overlay -->
+            <div class="header-overlay">
+                <div class="business-name">
+                    <i class="fas fa-hospital mr-2"></i>{{ $settings['business_name'] }}
                 </div>
+                <div class="clock" id="clock">--:--:--</div>
+            </div>
 
-                <div class="current-turn-display" id="currentTurnDisplay">
-                    <div class="no-queue">
-                        <i class="fas fa-hourglass-half"></i>
-                        <h2>Esperando turnos...</h2>
+            <!-- Video player - you can replace src with your video URL -->
+            <div id="videoContainer">
+                @if(isset($settings['tv_video_url']) && $settings['tv_video_url'])
+                    <video id="backgroundVideo" autoplay muted loop playsinline>
+                        <source src="{{ $settings['tv_video_url'] }}" type="video/mp4">
+                    </video>
+                @else
+                    <div class="placeholder-content">
+                        <i class="fas fa-tv"></i>
+                        <p>Pantalla de Turnos</p>
+                        <small class="text-muted">Configure un video en Ajustes del Sistema</small>
                     </div>
-                </div>
+                @endif
+            </div>
+        </div>
 
-                <div class="windows-strip" id="windowsStrip">
-                    <!-- Dynamic windows -->
-                </div>
+        <!-- Queue Strip at Bottom -->
+        <div class="queue-strip">
+            <div class="queue-strip-title">
+                <i class="fas fa-list-ol"></i>En Cola
             </div>
 
-            <div class="col-md-4 right-panel">
-                <div class="next-turns-header">
-                    <h2><i class="fas fa-list-ol mr-2"></i>Próximos Turnos</h2>
-                </div>
-
-                <div class="next-turns-list" id="nextTurnsList">
-                    <!-- Dynamic list -->
-                </div>
+            <div class="queue-items" id="queueItems">
+                <span class="no-queue-message">Cargando...</span>
             </div>
+
+            <div class="windows-serving" id="windowsServing">
+                <!-- Dynamic windows -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Turn Call Modal -->
+    <div class="turn-call-modal" id="turnCallModal">
+        <div class="turn-call-content">
+            <div class="countdown" id="modalCountdown">10</div>
+            <div class="label">Turno Llamado</div>
+            <div class="ticket-number" id="modalTicket">--</div>
+            <div class="window-info">
+                <i class="fas fa-arrow-right"></i>
+                <span id="modalWindow">--</span>
+            </div>
+            <div class="service-type" id="modalService">--</div>
         </div>
     </div>
 
@@ -191,12 +350,46 @@
         const SHOW_NEXT = {{ $settings['show_next'] }};
         const SOUND_ENABLED = {{ $settings['sound_enabled'] ? 'true' : 'false' }};
         const VOICE_ENABLED = {{ $settings['voice_enabled'] ? 'true' : 'false' }};
+        const MODAL_DURATION = 10; // seconds
 
         let lastCalledTimestamp = 0;
+        let modalTimeout = null;
+        let countdownInterval = null;
 
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').textContent = now.toLocaleTimeString('es-ES');
+        }
+
+        function showTurnModal(ticketNumber, windowName, serviceColor, serviceName) {
+            // Clear any existing timeout
+            if (modalTimeout) clearTimeout(modalTimeout);
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            // Set modal content
+            $('#modalTicket').text(ticketNumber).css('color', serviceColor);
+            $('#modalWindow').text(windowName);
+            $('#modalService').text(serviceName).css('background-color', serviceColor);
+            $('#modalCountdown').text(MODAL_DURATION);
+
+            // Show modal
+            $('#turnCallModal').addClass('show');
+
+            // Countdown
+            let remaining = MODAL_DURATION;
+            countdownInterval = setInterval(function() {
+                remaining--;
+                $('#modalCountdown').text(remaining);
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+
+            // Auto hide after MODAL_DURATION seconds
+            modalTimeout = setTimeout(function() {
+                $('#turnCallModal').removeClass('show');
+                clearInterval(countdownInterval);
+            }, MODAL_DURATION * 1000);
         }
 
         function playNotification(ticketNumber, windowName) {
@@ -216,64 +409,54 @@
         function fetchData() {
             $.get('{{ route("display.data") }}', { show_next: SHOW_NEXT })
                 .done(function(data) {
-                    // Current turn display
-                    let currentHtml = '';
-                    const activeTurns = data.current.filter(q => q.status === 'called');
-
-                    if (activeTurns.length > 0) {
-                        const current = activeTurns[0];
-                        currentHtml = `
-                            <div class="label">Turno Actual</div>
-                            <div class="ticket-number" style="color: ${current.service_color}">${current.ticket_number}</div>
-                            <div class="window-info"><i class="fas fa-arrow-right mr-2"></i>${current.window_name}</div>
-                        `;
-                    } else {
-                        currentHtml = `
-                            <div class="no-queue">
-                                <i class="fas fa-hourglass-half"></i>
-                                <h2>Esperando turnos...</h2>
-                            </div>
-                        `;
-                    }
-                    $('#currentTurnDisplay').html(currentHtml);
-
-                    // Windows strip
-                    let windowsHtml = '';
-                    data.windows.forEach(function(window) {
-                        const isActive = window.current_ticket !== null;
-                        windowsHtml += `
-                            <div class="window-mini ${isActive ? 'active' : ''}">
-                                <div class="name">${window.name}</div>
-                                <div class="ticket">${window.current_ticket || '-'}</div>
-                            </div>
-                        `;
-                    });
-                    $('#windowsStrip').html(windowsHtml);
-
-                    // Next turns list
-                    let nextHtml = '';
+                    // Queue items in bottom strip
+                    let queueHtml = '';
                     if (data.pending.length === 0) {
-                        nextHtml = '<div class="text-center text-muted py-5"><i class="fas fa-check-circle fa-3x mb-3"></i><br>No hay turnos pendientes</div>';
+                        queueHtml = '<span class="no-queue-message">No hay turnos en espera</span>';
                     } else {
                         data.pending.forEach(function(queue) {
-                            nextHtml += `
-                                <div class="next-turn-item">
-                                    <span class="ticket" style="color: ${queue.service_color}">${queue.ticket_number}</span>
-                                    <span class="service" style="background-color: ${queue.service_color}">${queue.service_name}</span>
+                            queueHtml += `
+                                <div class="queue-item">
+                                    <span class="number" style="color: ${queue.service_color}">${queue.ticket_number}</span>
+                                    <span class="service-badge" style="background-color: ${queue.service_color}">${queue.service_name}</span>
                                 </div>
                             `;
                         });
                     }
-                    $('#nextTurnsList').html(nextHtml);
+                    $('#queueItems').html(queueHtml);
 
-                    // Check for new call
+                    // Windows currently serving
+                    let windowsHtml = '';
+                    data.windows.forEach(function(window) {
+                        const isActive = window.current_ticket !== null;
+                        windowsHtml += `
+                            <div class="window-badge ${isActive ? '' : 'inactive'}">
+                                <div class="window-name">${window.name}</div>
+                                <div class="window-ticket">${window.current_ticket || '-'}</div>
+                            </div>
+                        `;
+                    });
+                    $('#windowsServing').html(windowsHtml);
+
+                    // Check for new call - show modal
                     if (data.last_called && data.last_called.called_at > lastCalledTimestamp) {
                         lastCalledTimestamp = data.last_called.called_at;
+
+                        // Play sound and voice
                         playNotification(data.last_called.ticket_number, data.last_called.window);
+
+                        // Show modal with turn info
+                        showTurnModal(
+                            data.last_called.ticket_number,
+                            data.last_called.window,
+                            data.last_called.service_color || '#1e3c72',
+                            data.last_called.service_name || 'Servicio'
+                        );
                     }
                 });
         }
 
+        // Initialize
         updateClock();
         setInterval(updateClock, 1000);
         fetchData();

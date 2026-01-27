@@ -131,6 +131,7 @@ class DisplayController extends Controller
             // Last called (for sound notification)
             $lastCalled = Queue::today()
                 ->where('status', 'called')
+                ->with(['serviceType', 'serviceWindow'])
                 ->orderBy('called_at', 'desc')
                 ->first();
 
@@ -144,6 +145,8 @@ class DisplayController extends Controller
                     'ticket_number' => $lastCalled->ticket_number,
                     'window' => $lastCalled->serviceWindow ? $lastCalled->serviceWindow->name : '',
                     'called_at' => $lastCalled->called_at->timestamp,
+                    'service_name' => $lastCalled->serviceType ? $lastCalled->serviceType->name : 'Servicio',
+                    'service_color' => $lastCalled->serviceType ? $lastCalled->serviceType->color : '#1e3c72',
                 ] : null,
             ];
         });
@@ -162,6 +165,7 @@ class DisplayController extends Controller
             'sound_enabled' => SystemSetting::get('display_sound_enabled', true),
             'voice_enabled' => SystemSetting::get('display_voice_enabled', true),
             'business_name' => SystemSetting::get('business_name', 'Sistema de Turnos'),
+            'tv_video_url' => SystemSetting::get('tv_video_url', ''),
         ];
 
         return view('display.tv', compact('settings'));
