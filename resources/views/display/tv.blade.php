@@ -49,54 +49,163 @@
         }
 
         /* Video/Content Area - left side */
-        .video-area {
-            flex: 1;
-            position: relative;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+            .video-area {
+                flex: 1;
+                position: relative;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
 
-        .video-area video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+            .video-area video {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: 1;
+            }
 
-        .video-area .placeholder-content {
-            text-align: center;
-            color: #333;
-        }
+            /* Overlay content sobre el video - POSICIÓN SUPERIOR IZQUIERDA */
+            .video-area .overlay-content {
+                position: absolute;
+                top: 2rem;
+                left: 2rem;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+                background: rgba(0, 0, 0, 0.4);
+                padding: 1.2rem 2rem;
+                border-radius: 15px;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            }
 
-        .video-area .placeholder-content .logo-container {
-            margin-bottom: 1.5rem;
-        }
+            /* Logo - FIJO y estático */
+            .video-area .overlay-content .logo-container {
+                margin-bottom: 0;
+            }
 
-        .video-area .placeholder-content .logo-container img {
-            max-width: 280px;
-            max-height: 180px;
-            object-fit: contain;
-        }
+            .video-area .overlay-content .logo-container img {
+                height: 80px;
+                width: auto;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+                /* Sin animación - queda quieto */
+            }
 
-        .video-area .placeholder-content .logo-placeholder {
-            font-size: 6rem;
-            color: #1e3c72;
-        }
+            .video-area .overlay-content .logo-placeholder {
+                font-size: 3.5rem;
+                color: rgba(255,255,255,0.95);
+                text-shadow: 0 0 15px rgba(30, 60, 114, 0.8);
+                /* Sin animación - queda quieto */
+            }
 
-        .video-area .placeholder-content .tv-message {
-            font-size: 2rem;
-            max-width: 90%;
-            margin: 0 auto;
-            line-height: 1.4;
-            color: #444;
-        }
+            /* Mensaje - CON ANIMACIÓN */
+            .video-area .overlay-content .tv-message,
+            .video-area .overlay-content .default-text {
+                font-size: 2.2rem;
+                line-height: 1.3;
+                font-weight: 600;
+                color: #fff;
+                margin: 0;
+                text-shadow: 1px 1px 6px rgba(0,0,0,0.8);
+                white-space: nowrap;
+                
+                /* Animación: Fade In/Out */
+                animation: messageFade 4s ease-in-out infinite;
+            }
 
-        .video-area .placeholder-content .default-text {
-            color: #555;
-            font-size: 1.3rem;
-        }
+            /* Animación 1: Fade In/Out (aparecer y desaparecer) */
+            @keyframes messageFade {
+                0%, 100% {
+                    opacity: 0.3;
+                    transform: scale(0.95);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            /* Animación 2: Slide In/Out (deslizar) */
+            /* 
+            @keyframes messageSlide {
+                0%, 100% {
+                    opacity: 0.3;
+                    transform: translateX(-30px) scale(0.95);
+                }
+                50% {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                }
+            }
+            .video-area .overlay-content .tv-message,
+            .video-area .overlay-content .default-text {
+                animation: messageSlide 4s ease-in-out infinite;
+            }
+            */
+
+            /* Animación 3: Typing Effect (máquina de escribir) */
+            /* 
+            .video-area .overlay-content .tv-message,
+            .video-area .overlay-content .default-text {
+                overflow: hidden;
+                border-right: 3px solid #fff;
+                white-space: nowrap;
+                animation: typing 3.5s steps(40, end) infinite,
+                        blink-caret 0.75s step-end infinite;
+            }
+
+            @keyframes typing {
+                0% { width: 0; }
+                50% { width: 100%; }
+                100% { width: 0; }
+            }
+
+            @keyframes blink-caret {
+                from, to { border-color: transparent; }
+                50% { border-color: #fff; }
+            }
+            */
+
+            /* Animación 4: Pulse (latido) */
+            /* 
+            @keyframes messagePulse {
+                0%, 100% {
+                    opacity: 0.7;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1.05);
+                }
+            }
+            .video-area .overlay-content .tv-message,
+            .video-area .overlay-content .default-text {
+                animation: messagePulse 3s ease-in-out infinite;
+            }
+            */
+
+            /* Animación 5: Bounce (rebote) */
+            /* 
+            @keyframes messageBounce {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-15px);
+                }
+            }
+            .video-area .overlay-content .tv-message,
+            .video-area .overlay-content .default-text {
+                animation: messageBounce 2s ease-in-out infinite;
+            }
+            */
 
         /* Windows Panel - right side */
         .windows-panel {
@@ -343,6 +452,17 @@
     min-height: 56.25vw;
     transform: translate(-50%, -50%);
 }
+
+/* Para hacer el logo más grande */
+.logo-container img {
+    max-width: 400px; /* aumentar */
+    max-height: 250px; /* aumentar */
+}
+
+/* Para hacer el mensaje más grande */
+.tv-message {
+    font-size: 3.2rem; /* aumentar */
+}
     </style>
 </head>
 <body>
@@ -355,36 +475,23 @@
             <div class="clock" id="clock">--:--:--</div>
         </div>
 
-        <!-- Video/Content Area -->
-        <div class="video-area">
-            <div id="videoContainer">
-    @if(!empty($settings['tv_video_url']))
-        @php
-            $url = $settings['tv_video_url'];
+   <!-- Video/Content Area -->
+<div class="video-area">
+    <div id="videoContainer">
+        @if(!empty($settings['tv_video_url']))
+            @php
+                $url = $settings['tv_video_url'];
+            @endphp
 
-            // Detectar YouTube
-            preg_match('/(youtu\.be\/|v=)([^&]+)/', $url, $matches);
-            $youtubeId = $matches[2] ?? null;
-        @endphp
-
-        @if($youtubeId)
-            {{-- YouTube --}}
-            <iframe
-                id="backgroundVideo"
-                src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&loop=1&playlist={{ $youtubeId }}"
-                frameborder="0"
-                allow="autoplay; encrypted-media"
-                allowfullscreen>
-            </iframe>
-        @else
-            {{-- Video MP4 --}}
+            {{-- Video MP4 (local) - siempre visible de fondo --}}
             <video id="backgroundVideo" autoplay muted loop playsinline>
-                <source src="{{ $url }}" type="video/mp4">
+                <source src="{{ asset(ltrim($url, '/')) }}" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
             </video>
         @endif
-    @else
-        {{-- Placeholder --}}
-        <div class="placeholder-content">
+
+        {{-- Overlay: Logo y Mensaje SIEMPRE visible --}}
+        <div class="overlay-content">
             <div class="logo-container">
                 @if(!empty($settings['tv_logo_url']))
                     <img src="{{ $settings['tv_logo_url'] }}" alt="Logo">
@@ -396,13 +503,12 @@
             @if(!empty($settings['tv_message']))
                 <p class="tv-message">{{ $settings['tv_message'] }}</p>
             @else
-                <p class="default-text">Bienvenido a {{ $settings['business_name'] }}</p>
+                <p class="default-text">Bienvenido a {{ $settings['business_name'] ?? 'Nuestra Empresa' }}</p>
                 <small class="default-text">Sistema de Turnos</small>
             @endif
         </div>
-    @endif
+    </div>
 </div>
-        </div>
 
         <!-- Windows Panel - Right Side -->
         <div class="windows-panel">
@@ -439,12 +545,17 @@
         </div>
     </div>
 
-    <audio id="notificationSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
+    <audio id="notificationSound" preload="auto" style="display:none;">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
     </audio>
 
     <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
     <script>
+
+            
+
+
+
         const REFRESH_RATE = {{ $settings['refresh_rate'] }};
         const SHOW_NEXT = {{ $settings['show_next'] }};
         const SOUND_ENABLED = {{ $settings['sound_enabled'] ? 'true' : 'false' }};
@@ -454,6 +565,8 @@
         let lastCalledTimestamp = 0;
         let modalTimeout = null;
         let countdownInterval = null;
+        let lastProcessedCall = null;
+        window.currentNotificationAudio = null;
 
         function updateClock() {
             const now = new Date();
@@ -488,15 +601,35 @@
 
         function playNotification(ticketNumber, windowName) {
             if (SOUND_ENABLED) {
-                document.getElementById('notificationSound').play();
+                // Cancelar audio anterior
+                if (window.currentNotificationAudio) {
+                    window.currentNotificationAudio.pause();
+                    window.currentNotificationAudio = null;
+                }
+                
+                // Nueva instancia
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3');
+                audio.volume = 1;
+                window.currentNotificationAudio = audio;
+                
+                audio.play().catch(err => console.log('Audio error:', err));
+                
+                audio.onended = () => {
+                    window.currentNotificationAudio = null;
+                };
             }
 
             if (VOICE_ENABLED && 'speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                
                 const utterance = new SpeechSynthesisUtterance(`Turno ${ticketNumber}, pasar a ${windowName}`);
                 utterance.lang = 'es-ES';
                 utterance.rate = 0.8;
                 utterance.volume = 1;
-                speechSynthesis.speak(utterance);
+                
+                setTimeout(() => {
+                    speechSynthesis.speak(utterance);
+                }, 300);
             }
         }
 
@@ -553,6 +686,14 @@
         setInterval(updateClock, 1000);
         fetchData();
         setInterval(fetchData, REFRESH_RATE);
+
+        // Limpiar al recargar
+window.addEventListener('beforeunload', function() {
+    if (window.currentNotificationAudio) {
+        window.currentNotificationAudio.pause();
+    }
+    speechSynthesis.cancel();
+});
     </script>
 </body>
 </html>
