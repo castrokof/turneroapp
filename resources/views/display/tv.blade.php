@@ -42,15 +42,36 @@
 
         .video-area .placeholder-content {
             text-align: center;
-            color: #666;
+            color: #fff;
         }
 
-        .video-area .placeholder-content i {
+        .video-area .placeholder-content .logo-container {
+            margin-bottom: 2rem;
+        }
+
+        .video-area .placeholder-content .logo-container img {
+            max-width: 300px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        .video-area .placeholder-content .logo-placeholder {
             font-size: 8rem;
+            color: #666;
             margin-bottom: 1rem;
         }
 
-        .video-area .placeholder-content p {
+        .video-area .placeholder-content .tv-message {
+            font-size: 2.5rem;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.4;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .video-area .placeholder-content .default-text {
+            color: #666;
             font-size: 1.5rem;
         }
 
@@ -294,7 +315,7 @@
                 <div class="clock" id="clock">--:--:--</div>
             </div>
 
-            <!-- Video player - you can replace src with your video URL -->
+            <!-- Video or Logo/Message content -->
             <div id="videoContainer">
                 @if(isset($settings['tv_video_url']) && $settings['tv_video_url'])
                     <video id="backgroundVideo" autoplay muted loop playsinline>
@@ -302,9 +323,19 @@
                     </video>
                 @else
                     <div class="placeholder-content">
-                        <i class="fas fa-tv"></i>
-                        <p>Pantalla de Turnos</p>
-                        <small class="text-muted">Configure un video en Ajustes del Sistema</small>
+                        <div class="logo-container">
+                            @if(isset($settings['tv_logo_url']) && $settings['tv_logo_url'])
+                                <img src="{{ $settings['tv_logo_url'] }}" alt="Logo">
+                            @else
+                                <i class="fas fa-hospital logo-placeholder"></i>
+                            @endif
+                        </div>
+                        @if(isset($settings['tv_message']) && $settings['tv_message'])
+                            <p class="tv-message">{{ $settings['tv_message'] }}</p>
+                        @else
+                            <p class="default-text">Bienvenido a {{ $settings['business_name'] }}</p>
+                            <small class="default-text">Sistema de Turnos</small>
+                        @endif
                     </div>
                 @endif
             </div>

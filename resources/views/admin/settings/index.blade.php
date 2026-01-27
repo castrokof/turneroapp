@@ -61,6 +61,19 @@
                                               name="settings[{{ $setting->key }}]"
                                               rows="2">{{ is_array($setting->value) ? json_encode($setting->value) : $setting->value }}</textarea>
                                     <small class="form-text text-muted">Formato JSON</small>
+                                @elseif($setting->key === 'tv_message')
+                                    <textarea class="form-control"
+                                              id="settings_{{ $setting->key }}"
+                                              name="settings[{{ $setting->key }}]"
+                                              rows="3"
+                                              placeholder="Ej: Bienvenidos a nuestra clínica. Por favor espere su turno.">{{ $setting->value }}</textarea>
+                                @elseif($setting->key === 'tv_logo_url' || $setting->key === 'tv_video_url')
+                                    <input type="text" class="form-control"
+                                           id="settings_{{ $setting->key }}"
+                                           name="settings[{{ $setting->key }}]"
+                                           value="{{ $setting->value }}"
+                                           placeholder="/images/logo.png o https://...">
+                                    <small class="form-text text-muted">Ruta local (ej: /images/logo.png) o URL externa</small>
                                 @else
                                     <input type="text" class="form-control"
                                            id="settings_{{ $setting->key }}"

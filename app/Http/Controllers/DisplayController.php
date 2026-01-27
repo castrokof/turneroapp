@@ -166,6 +166,8 @@ class DisplayController extends Controller
             'voice_enabled' => SystemSetting::get('display_voice_enabled', true),
             'business_name' => SystemSetting::get('business_name', 'Sistema de Turnos'),
             'tv_video_url' => SystemSetting::get('tv_video_url', ''),
+            'tv_logo_url' => SystemSetting::get('tv_logo_url', ''),
+            'tv_message' => SystemSetting::get('tv_message', ''),
         ];
 
         return view('display.tv', compact('settings'));

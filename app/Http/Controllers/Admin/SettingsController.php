@@ -67,6 +67,11 @@ class SettingsController extends Controller
             ['key' => 'display_sound_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'display', 'description' => 'Sonido habilitado'],
             ['key' => 'display_voice_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'display', 'description' => 'Voz habilitada'],
 
+            // TV Display
+            ['key' => 'tv_logo_url', 'value' => '', 'type' => 'string', 'group' => 'tv', 'description' => 'URL o ruta del logo para TV'],
+            ['key' => 'tv_message', 'value' => '', 'type' => 'string', 'group' => 'tv', 'description' => 'Mensaje para mostrar en TV'],
+            ['key' => 'tv_video_url', 'value' => '', 'type' => 'string', 'group' => 'tv', 'description' => 'URL o ruta del video para TV'],
+
             // Demo
             ['key' => 'demo_mode', 'value' => '0', 'type' => 'boolean', 'group' => 'system', 'description' => 'Modo demo'],
         ];
