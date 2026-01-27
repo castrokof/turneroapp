@@ -16,22 +16,45 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Main container */
+        /* Main container - 3 column layout */
         .tv-container {
             height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            grid-template-rows: auto 1fr auto;
+            gap: 0;
         }
 
-        /* Video/Content Area - Takes most of the screen */
+        /* Header - spans full width */
+        .header-bar {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-bar .business-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .header-bar .clock {
+            font-size: 2.2rem;
+            font-family: monospace;
+        }
+
+        /* Video/Content Area - left side */
         .video-area {
             flex: 1;
             position: relative;
-            background: #E7E7F8;
+            background: #111;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
 
         .video-area video {
@@ -46,74 +69,108 @@
         }
 
         .video-area .placeholder-content .logo-container {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .video-area .placeholder-content .logo-container img {
-            max-width: 300px;
-            max-height: 200px;
+            max-width: 280px;
+            max-height: 180px;
             object-fit: contain;
         }
 
         .video-area .placeholder-content .logo-placeholder {
-            font-size: 8rem;
-            color: #666;
-            margin-bottom: 1rem;
+            font-size: 6rem;
+            color: #444;
         }
 
         .video-area .placeholder-content .tv-message {
-            font-size: 2.5rem;
-            max-width: 80%;
+            font-size: 2rem;
+            max-width: 90%;
             margin: 0 auto;
             line-height: 1.4;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #ccc;
         }
 
         .video-area .placeholder-content .default-text {
             color: #666;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
-        /* Header overlay on video */
-        .header-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 1rem 2rem;
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+        /* Windows Panel - right side */
+        .windows-panel {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            padding: 1rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
+            flex-direction: column;
+            border-left: 3px solid #2a5298;
         }
 
-        .header-overlay .business-name {
+        .windows-panel-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding-bottom: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: #ffc107;
+        }
+
+        .windows-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            overflow-y: auto;
+        }
+
+        .window-card {
+            background: #333;
+            border-radius: 10px;
+            padding: 0.8rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .window-card.active {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+        }
+
+        .window-card .window-name {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.3rem;
+        }
+
+        .window-card .window-ticket {
             font-size: 1.8rem;
             font-weight: bold;
         }
 
-        .header-overlay .clock {
-            font-size: 2rem;
-            font-family: monospace;
+        .window-card.inactive .window-ticket {
+            color: #666;
         }
 
-        /* Queue strip at bottom */
+        /* Queue strip at bottom - spans full width */
         .queue-strip {
+            grid-column: 1 / -1;
             background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
-            padding: 1rem 2rem;
+            padding: 1.2rem 2rem;
             display: flex;
             align-items: center;
             gap: 2rem;
+            min-height: 100px;
         }
 
         .queue-strip-title {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
             white-space: nowrap;
-            padding-right: 1rem;
-            border-right: 2px solid rgba(255,255,255,0.3);
+            padding-right: 1.5rem;
+            border-right: 3px solid rgba(255,255,255,0.3);
         }
 
         .queue-strip-title i {
@@ -122,66 +179,39 @@
 
         .queue-items {
             display: flex;
-            gap: 1rem;
+            gap: 1.2rem;
             flex: 1;
-            overflow: hidden;
+            overflow-x: auto;
+            padding: 0.3rem 0;
         }
 
         .queue-item {
             background: rgba(255,255,255,0.15);
-            border-radius: 10px;
-            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            padding: 1rem 1.8rem;
             display: flex;
             align-items: center;
             gap: 1rem;
-            min-width: 150px;
+            min-width: 180px;
+            flex-shrink: 0;
         }
 
         .queue-item .number {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             font-weight: bold;
         }
 
         .queue-item .service-badge {
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .no-queue-message {
             color: rgba(255,255,255,0.6);
             font-style: italic;
-        }
-
-        /* Windows being served */
-        .windows-serving {
-            display: flex;
-            gap: 0.8rem;
-            margin-left: auto;
-            padding-left: 1rem;
-            border-left: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .window-badge {
-            background: #28a745;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            text-align: center;
-            min-width: 100px;
-        }
-
-        .window-badge .window-name {
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-
-        .window-badge .window-ticket {
             font-size: 1.3rem;
-            font-weight: bold;
-        }
-
-        .window-badge.inactive {
-            background: #444;
         }
 
         /* MODAL for turn call */
@@ -191,7 +221,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             display: none;
             align-items: center;
             justify-content: center;
@@ -211,7 +241,7 @@
         .turn-call-content {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
             border-radius: 30px;
-            padding: 4rem 6rem;
+            padding: 3rem 5rem;
             text-align: center;
             box-shadow: 0 0 100px rgba(30, 60, 114, 0.8);
             animation: scaleIn 0.3s ease-out;
@@ -241,7 +271,7 @@
         }
 
         .turn-call-content .label {
-            font-size: 2rem;
+            font-size: 2.5rem;
             text-transform: uppercase;
             letter-spacing: 5px;
             opacity: 0.9;
@@ -251,7 +281,7 @@
         }
 
         .turn-call-content .ticket-number {
-            font-size: 14rem;
+            font-size: 12rem;
             font-weight: 900;
             line-height: 1;
             text-shadow: 0 0 50px rgba(255,255,255,0.5);
@@ -266,8 +296,8 @@
         }
 
         .turn-call-content .window-info {
-            font-size: 3.5rem;
-            margin-top: 2rem;
+            font-size: 4rem;
+            margin-top: 1.5rem;
             color: #ffc107;
             position: relative;
             z-index: 1;
@@ -291,7 +321,6 @@
             opacity: 0.6;
         }
 
-        /* Service type indicator */
         .turn-call-content .service-type {
             margin-top: 1.5rem;
             padding: 0.5rem 2rem;
@@ -316,17 +345,16 @@
 </head>
 <body>
     <div class="tv-container">
-        <!-- Main Video/Content Area -->
-        <div class="video-area">
-            <!-- Header overlay -->
-            <div class="header-overlay">
-                <div class="business-name">
-                    <i class="fas fa-hospital mr-2"></i>{{ $settings['business_name'] }}
-                </div>
-                <div class="clock" id="clock">--:--:--</div>
+        <!-- Header Bar -->
+        <div class="header-bar">
+            <div class="business-name">
+                <i class="fas fa-hospital mr-2"></i>{{ $settings['business_name'] }}
             </div>
+            <div class="clock" id="clock">--:--:--</div>
+        </div>
 
-            <!-- Video or Logo/Message content -->
+        <!-- Video/Content Area -->
+        <div class="video-area">
             <div id="videoContainer">
     @if(!empty($settings['tv_video_url']))
         @php
@@ -374,18 +402,23 @@
 </div>
         </div>
 
+        <!-- Windows Panel - Right Side -->
+        <div class="windows-panel">
+            <div class="windows-panel-title">
+                <i class="fas fa-desktop mr-2"></i>Atendiendo
+            </div>
+            <div class="windows-grid" id="windowsGrid">
+                <!-- Dynamic windows -->
+            </div>
+        </div>
+
         <!-- Queue Strip at Bottom -->
         <div class="queue-strip">
             <div class="queue-strip-title">
                 <i class="fas fa-list-ol"></i>En Cola
             </div>
-
             <div class="queue-items" id="queueItems">
                 <span class="no-queue-message">Cargando...</span>
-            </div>
-
-            <div class="windows-serving" id="windowsServing">
-                <!-- Dynamic windows -->
             </div>
         </div>
     </div>
@@ -426,20 +459,16 @@
         }
 
         function showTurnModal(ticketNumber, windowName, serviceColor, serviceName) {
-            // Clear any existing timeout
             if (modalTimeout) clearTimeout(modalTimeout);
             if (countdownInterval) clearInterval(countdownInterval);
 
-            // Set modal content
             $('#modalTicket').text(ticketNumber).css('color', serviceColor);
             $('#modalWindow').text(windowName);
             $('#modalService').text(serviceName).css('background-color', serviceColor);
             $('#modalCountdown').text(MODAL_DURATION);
 
-            // Show modal
             $('#turnCallModal').addClass('show');
 
-            // Countdown
             let remaining = MODAL_DURATION;
             countdownInterval = setInterval(function() {
                 remaining--;
@@ -449,7 +478,6 @@
                 }
             }, 1000);
 
-            // Auto hide after MODAL_DURATION seconds
             modalTimeout = setTimeout(function() {
                 $('#turnCallModal').removeClass('show');
                 clearInterval(countdownInterval);
@@ -489,27 +517,25 @@
                     }
                     $('#queueItems').html(queueHtml);
 
-                    // Windows currently serving
+                    // Windows grid on right side
                     let windowsHtml = '';
                     data.windows.forEach(function(window) {
                         const isActive = window.current_ticket !== null;
                         windowsHtml += `
-                            <div class="window-badge ${isActive ? '' : 'inactive'}">
+                            <div class="window-card ${isActive ? 'active' : 'inactive'}">
                                 <div class="window-name">${window.name}</div>
                                 <div class="window-ticket">${window.current_ticket || '-'}</div>
                             </div>
                         `;
                     });
-                    $('#windowsServing').html(windowsHtml);
+                    $('#windowsGrid').html(windowsHtml);
 
                     // Check for new call - show modal
                     if (data.last_called && data.last_called.called_at > lastCalledTimestamp) {
                         lastCalledTimestamp = data.last_called.called_at;
 
-                        // Play sound and voice
                         playNotification(data.last_called.ticket_number, data.last_called.window);
 
-                        // Show modal with turn info
                         showTurnModal(
                             data.last_called.ticket_number,
                             data.last_called.window,
