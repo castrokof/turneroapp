@@ -498,7 +498,35 @@
                 } else {
                     renderQueueList(allQueues);
                 }
+
+                // Update queue summary by service
+                if (response.summary) {
+                    renderQueueSummary(response.summary);
+                }
             });
+    }
+
+    // Render queue summary by service type
+    function renderQueueSummary(summary) {
+        let html = '';
+        if (summary.length === 0) {
+            html = `<li class="list-group-item text-center text-muted">
+                <i class="fas fa-inbox mr-2"></i>Sin turnos pendientes
+            </li>`;
+        } else {
+            summary.forEach(function(item) {
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge mr-2" style="background-color: ${item.color}; color: white;">
+                            ${item.prefix}
+                        </span>
+                        ${item.name}
+                    </div>
+                    <span class="badge badge-primary badge-pill">${item.total}</span>
+                </li>`;
+            });
+        }
+        $('#queueSummaryList').html(html);
     }
 
     function getPriorityColor(priority) {
