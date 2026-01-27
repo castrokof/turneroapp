@@ -9,8 +9,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background: #000;
-            color: #fff;
+            background: linear-gradient(135deg, #e8eef5 0%, #d5dde8 100%);
+            color: #333;
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -33,26 +33,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #fff;
         }
 
         .header-bar .business-name {
             font-size: 1.8rem;
             font-weight: bold;
+            color: #fff;
         }
 
         .header-bar .clock {
             font-size: 2.2rem;
             font-family: monospace;
+            color: #fff;
         }
 
         /* Video/Content Area - left side */
         .video-area {
-            background: #111;
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
         .video-area video {
@@ -63,7 +67,7 @@
 
         .video-area .placeholder-content {
             text-align: center;
-            color: #fff;
+            color: #333;
         }
 
         .video-area .placeholder-content .logo-container {
@@ -78,7 +82,7 @@
 
         .video-area .placeholder-content .logo-placeholder {
             font-size: 6rem;
-            color: #444;
+            color: #1e3c72;
         }
 
         .video-area .placeholder-content .tv-message {
@@ -86,11 +90,11 @@
             max-width: 90%;
             margin: 0 auto;
             line-height: 1.4;
-            color: #ccc;
+            color: #444;
         }
 
         .video-area .placeholder-content .default-text {
-            color: #666;
+            color: #555;
             font-size: 1.3rem;
         }
 
@@ -328,6 +332,17 @@
             position: relative;
             z-index: 1;
         }
+
+        #videoContainer iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 177.77vh;   /* 16:9 */
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 56.25vw;
+    transform: translate(-50%, -50%);
+}
     </style>
 </head>
 <body>
@@ -343,28 +358,50 @@
         <!-- Video/Content Area -->
         <div class="video-area">
             <div id="videoContainer">
-                @if(isset($settings['tv_video_url']) && $settings['tv_video_url'])
-                    <video id="backgroundVideo" autoplay muted loop playsinline>
-                        <source src="{{ $settings['tv_video_url'] }}" type="video/mp4">
-                    </video>
+    @if(!empty($settings['tv_video_url']))
+        @php
+            $url = $settings['tv_video_url'];
+
+            // Detectar YouTube
+            preg_match('/(youtu\.be\/|v=)([^&]+)/', $url, $matches);
+            $youtubeId = $matches[2] ?? null;
+        @endphp
+
+        @if($youtubeId)
+            {{-- YouTube --}}
+            <iframe
+                id="backgroundVideo"
+                src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&loop=1&playlist={{ $youtubeId }}"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        @else
+            {{-- Video MP4 --}}
+            <video id="backgroundVideo" autoplay muted loop playsinline>
+                <source src="{{ $url }}" type="video/mp4">
+            </video>
+        @endif
+    @else
+        {{-- Placeholder --}}
+        <div class="placeholder-content">
+            <div class="logo-container">
+                @if(!empty($settings['tv_logo_url']))
+                    <img src="{{ $settings['tv_logo_url'] }}" alt="Logo">
                 @else
-                    <div class="placeholder-content">
-                        <div class="logo-container">
-                            @if(isset($settings['tv_logo_url']) && $settings['tv_logo_url'])
-                                <img src="{{ $settings['tv_logo_url'] }}" alt="Logo">
-                            @else
-                                <i class="fas fa-hospital logo-placeholder"></i>
-                            @endif
-                        </div>
-                        @if(isset($settings['tv_message']) && $settings['tv_message'])
-                            <p class="tv-message">{{ $settings['tv_message'] }}</p>
-                        @else
-                            <p class="default-text">Bienvenido a {{ $settings['business_name'] }}</p>
-                            <small class="default-text">Sistema de Turnos</small>
-                        @endif
-                    </div>
+                    <i class="fas fa-hospital logo-placeholder"></i>
                 @endif
             </div>
+
+            @if(!empty($settings['tv_message']))
+                <p class="tv-message">{{ $settings['tv_message'] }}</p>
+            @else
+                <p class="default-text">Bienvenido a {{ $settings['business_name'] }}</p>
+                <small class="default-text">Sistema de Turnos</small>
+            @endif
+        </div>
+    @endif
+</div>
         </div>
 
         <!-- Windows Panel - Right Side -->

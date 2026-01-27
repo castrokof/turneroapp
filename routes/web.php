@@ -132,3 +132,22 @@ Route::prefix('agent')->name('agent.')->middleware(['auth', 'role:admin,agent'])
 });
 
 
+Route::get('/test-printer', function() {
+    try {
+        $printer = new \App\Services\PrinterService();
+        
+        $ticket = new \stdClass();
+        $ticket->ticket_number = 'TEST-001';
+        $ticket->serviceType = new \stdClass();
+        $ticket->serviceType->name = 'Prueba de Impresion';
+        $ticket->priority = 'normal';
+        $ticket->serviceWindow = null;
+        $ticket->pending_count = 5;
+        
+        $result = $printer->printTicket($ticket);
+        
+        return $result ? 'Ticket impreso correctamente!' : 'Error al imprimir';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});

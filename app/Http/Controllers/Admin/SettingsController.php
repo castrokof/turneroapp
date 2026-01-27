@@ -12,6 +12,7 @@ class SettingsController extends Controller
     public function index()
     {
         $settings = SystemSetting::all()->groupBy('group');
+        
 
         return view('admin.settings.index', compact('settings'));
     }
