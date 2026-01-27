@@ -33,16 +33,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #fff;
         }
 
         .header-bar .business-name {
             font-size: 1.8rem;
             font-weight: bold;
+            color: #fff;
         }
 
         .header-bar .clock {
             font-size: 2.2rem;
             font-family: monospace;
+            color: #fff;
         }
 
         /* Video/Content Area - left side */
