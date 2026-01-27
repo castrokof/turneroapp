@@ -75,7 +75,7 @@ Si necesita retirarse antes de ser atendido:
 
 ```
 ================================
-      CLINICA SAN JOSE
+      SALUD MEDCOL
 ================================
    Fecha: 27/01/2026 10:35
 
