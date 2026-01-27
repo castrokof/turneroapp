@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
+/storage/framework
 .env
 .env.backup
 .phpunit.result.cache
@@ -13,6 +14,9 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+<<<<<<< HEAD
+CLAUDE.md
+=======
 # Laravel Framework Cache
 /storage/framework/cache/data/*
 !/storage/framework/cache/data/.gitignore
@@ -22,3 +26,4 @@ yarn-error.log
 !/storage/framework/views/.gitignore
 /storage/logs/*
 !/storage/logs/.gitignore
+>>>>>>> 3792e481f07b7144a5f58aedfce021d14afe66ac
