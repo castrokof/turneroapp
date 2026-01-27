@@ -9,8 +9,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background: #000;
-            color: #fff;
+            background: linear-gradient(135deg, #e8eef5 0%, #d5dde8 100%);
+            color: #333;
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -49,12 +49,11 @@
         .video-area {
             flex: 1;
             position: relative;
-            background: #111;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
         .video-area video {
@@ -65,7 +64,7 @@
 
         .video-area .placeholder-content {
             text-align: center;
-            color: #fff;
+            color: #333;
         }
 
         .video-area .placeholder-content .logo-container {
@@ -80,7 +79,7 @@
 
         .video-area .placeholder-content .logo-placeholder {
             font-size: 6rem;
-            color: #444;
+            color: #1e3c72;
         }
 
         .video-area .placeholder-content .tv-message {
@@ -88,11 +87,11 @@
             max-width: 90%;
             margin: 0 auto;
             line-height: 1.4;
-            color: #ccc;
+            color: #444;
         }
 
         .video-area .placeholder-content .default-text {
-            color: #666;
+            color: #555;
             font-size: 1.3rem;
         }
 
