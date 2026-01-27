@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class Queue extends Model
@@ -189,6 +190,22 @@ class Queue extends Model
         return now()->diffInSeconds($this->started_at);
     }
 
+    // Clear display cache when queue state changes (for TV displays)
+    protected static function clearDisplayCache()
+    {
+        // Clear all display cache keys (with different service_type_id and show_next combinations)
+        Cache::forget('display_data__5');
+        Cache::forget('display_data__8');
+        Cache::forget('display_data_null_5');
+        Cache::forget('display_data_null_8');
+
+        // Also clear specific service type caches (1-10)
+        for ($i = 1; $i <= 10; $i++) {
+            Cache::forget("display_data_{$i}_5");
+            Cache::forget("display_data_{$i}_8");
+        }
+    }
+
     // State transitions
     public function call($windowId, $agentId)
     {
@@ -199,6 +216,8 @@ class Queue extends Model
             'called_at' => now(),
             'wait_time' => now()->diffInSeconds($this->created_at),
         ]);
+
+        self::clearDisplayCache();
     }
 
     public function startService()
@@ -207,6 +226,8 @@ class Queue extends Model
             'status' => self::STATUS_IN_PROGRESS,
             'started_at' => now(),
         ]);
+
+        self::clearDisplayCache();
     }
 
     public function complete($notes = null)
@@ -222,6 +243,7 @@ class Queue extends Model
         }
 
         $this->update($data);
+        self::clearDisplayCache();
     }
 
     public function markAbsent()
@@ -230,6 +252,8 @@ class Queue extends Model
             'status' => self::STATUS_ABSENT,
             'completed_at' => now(),
         ]);
+
+        self::clearDisplayCache();
     }
 
     public function cancel()
@@ -238,6 +262,8 @@ class Queue extends Model
             'status' => self::STATUS_CANCELLED,
             'completed_at' => now(),
         ]);
+
+        self::clearDisplayCache();
     }
 
     public function transfer($toWindowId, $reason = null)
@@ -250,6 +276,8 @@ class Queue extends Model
             'from_agent_id' => $this->agent_id,
             'reason' => $reason,
         ]);
+
+        self::clearDisplayCache();
 
         // Reset queue
         $this->update([

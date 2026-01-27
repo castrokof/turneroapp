@@ -7,6 +7,7 @@ use App\Models\ServiceType;
 use App\Models\ServiceWindow;
 use App\Models\SystemSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DisplayController extends Controller
 {
@@ -43,105 +44,114 @@ class DisplayController extends Controller
         $serviceTypeId = $request->get('service_type_id');
         $showNext = $request->get('show_next', 5);
 
-        // Get currently being attended
-        $currentQuery = Queue::today()
-            ->whereIn('status', ['called', 'in_progress'])
-            ->with(['serviceType', 'serviceWindow']);
+        // Cache key based on parameters (cache for 3 seconds to reduce DB load with multiple TVs)
+        $cacheKey = "display_data_{$serviceTypeId}_{$showNext}";
 
-        if ($serviceTypeId) {
-            $currentQuery->where('service_type_id', $serviceTypeId);
-        }
+        $data = Cache::remember($cacheKey, 3, function () use ($serviceTypeId, $showNext) {
+            // Get currently being attended
+            $currentQuery = Queue::today()
+                ->whereIn('status', ['called', 'in_progress'])
+                ->with(['serviceType', 'serviceWindow']);
 
-        $currentQueues = $currentQuery
-            ->orderBy('called_at', 'desc')
-            ->get()
-            ->map(function ($queue) {
-                return [
-                    'id' => $queue->id,
-                    'ticket_number' => $queue->ticket_number,
-                    'service_name' => $queue->serviceType->name,
-                    'service_color' => $queue->serviceType->color,
-                    'window_name' => $queue->serviceWindow ? $queue->serviceWindow->name : '-',
-                    'window_code' => $queue->serviceWindow ? $queue->serviceWindow->code : '-',
-                    'status' => $queue->status,
-                    'called_at' => $queue->called_at ? $queue->called_at->format('H:i:s') : null,
-                    'priority' => $queue->priority,
-                ];
-            });
+            if ($serviceTypeId) {
+                $currentQuery->where('service_type_id', $serviceTypeId);
+            }
 
-        // Get next pending
-        $pendingQuery = Queue::today()
-            ->pending()
-            ->with(['serviceType'])
-            ->orderByPriority();
+            $currentQueues = $currentQuery
+                ->orderBy('called_at', 'desc')
+                ->get()
+                ->map(function ($queue) {
+                    return [
+                        'id' => $queue->id,
+                        'ticket_number' => $queue->ticket_number,
+                        'service_name' => $queue->serviceType->name,
+                        'service_color' => $queue->serviceType->color,
+                        'window_name' => $queue->serviceWindow ? $queue->serviceWindow->name : '-',
+                        'window_code' => $queue->serviceWindow ? $queue->serviceWindow->code : '-',
+                        'status' => $queue->status,
+                        'called_at' => $queue->called_at ? $queue->called_at->format('H:i:s') : null,
+                        'priority' => $queue->priority,
+                    ];
+                });
 
-        if ($serviceTypeId) {
-            $pendingQuery->where('service_type_id', $serviceTypeId);
-        }
+            // Get next pending
+            $pendingQuery = Queue::today()
+                ->pending()
+                ->with(['serviceType'])
+                ->orderByPriority();
 
-        $pendingQueues = $pendingQuery
-            ->limit($showNext)
-            ->get()
-            ->map(function ($queue) {
-                return [
-                    'id' => $queue->id,
-                    'ticket_number' => $queue->ticket_number,
-                    'service_name' => $queue->serviceType->name,
-                    'service_color' => $queue->serviceType->color,
-                    'priority' => $queue->priority,
-                    'priority_label' => $queue->priority_label,
-                    'created_at' => $queue->created_at->format('H:i:s'),
-                ];
-            });
+            if ($serviceTypeId) {
+                $pendingQuery->where('service_type_id', $serviceTypeId);
+            }
 
-        // Get statistics
-        $statsQuery = Queue::today();
-        if ($serviceTypeId) {
-            $statsQuery->where('service_type_id', $serviceTypeId);
-        }
+            $pendingQueues = $pendingQuery
+                ->limit($showNext)
+                ->get()
+                ->map(function ($queue) {
+                    return [
+                        'id' => $queue->id,
+                        'ticket_number' => $queue->ticket_number,
+                        'service_name' => $queue->serviceType->name,
+                        'service_color' => $queue->serviceType->color,
+                        'priority' => $queue->priority,
+                        'priority_label' => $queue->priority_label,
+                        'created_at' => $queue->created_at->format('H:i:s'),
+                    ];
+                });
 
-        $stats = [
-            'total' => (clone $statsQuery)->count(),
-            'pending' => (clone $statsQuery)->pending()->count(),
-            'completed' => (clone $statsQuery)->where('status', 'completed')->count(),
-            'absent' => (clone $statsQuery)->where('status', 'absent')->count(),
-        ];
+            // Get statistics
+            $statsQuery = Queue::today();
+            if ($serviceTypeId) {
+                $statsQuery->where('service_type_id', $serviceTypeId);
+            }
 
-        // Active windows
-        $windows = ServiceWindow::active()
-            ->with('currentAgent')
-            ->get()
-            ->map(function ($window) {
-                $currentQueue = $window->getCurrentQueue();
-                return [
-                    'id' => $window->id,
-                    'name' => $window->name,
-                    'code' => $window->code,
-                    'agent' => $window->currentAgent ? $window->currentAgent->name : '-',
-                    'current_ticket' => $currentQueue ? $currentQueue->ticket_number : null,
-                    'status' => $currentQueue ? $currentQueue->status : 'free',
-                ];
-            });
+            $stats = [
+                'total' => (clone $statsQuery)->count(),
+                'pending' => (clone $statsQuery)->pending()->count(),
+                'completed' => (clone $statsQuery)->where('status', 'completed')->count(),
+                'absent' => (clone $statsQuery)->where('status', 'absent')->count(),
+            ];
 
-        // Last called (for sound notification)
-        $lastCalled = Queue::today()
-            ->where('status', 'called')
-            ->orderBy('called_at', 'desc')
-            ->first();
+            // Active windows
+            $windows = ServiceWindow::active()
+                ->with('currentAgent')
+                ->get()
+                ->map(function ($window) {
+                    $currentQueue = $window->getCurrentQueue();
+                    return [
+                        'id' => $window->id,
+                        'name' => $window->name,
+                        'code' => $window->code,
+                        'agent' => $window->currentAgent ? $window->currentAgent->name : '-',
+                        'current_ticket' => $currentQueue ? $currentQueue->ticket_number : null,
+                        'status' => $currentQueue ? $currentQueue->status : 'free',
+                    ];
+                });
 
-        return response()->json([
-            'current' => $currentQueues,
-            'pending' => $pendingQueues,
-            'stats' => $stats,
-            'windows' => $windows,
-            'last_called' => $lastCalled ? [
-                'id' => $lastCalled->id,
-                'ticket_number' => $lastCalled->ticket_number,
-                'window' => $lastCalled->serviceWindow ? $lastCalled->serviceWindow->name : '',
-                'called_at' => $lastCalled->called_at->timestamp,
-            ] : null,
-            'timestamp' => now()->timestamp,
-        ]);
+            // Last called (for sound notification)
+            $lastCalled = Queue::today()
+                ->where('status', 'called')
+                ->orderBy('called_at', 'desc')
+                ->first();
+
+            return [
+                'current' => $currentQueues,
+                'pending' => $pendingQueues,
+                'stats' => $stats,
+                'windows' => $windows,
+                'last_called' => $lastCalled ? [
+                    'id' => $lastCalled->id,
+                    'ticket_number' => $lastCalled->ticket_number,
+                    'window' => $lastCalled->serviceWindow ? $lastCalled->serviceWindow->name : '',
+                    'called_at' => $lastCalled->called_at->timestamp,
+                ] : null,
+            ];
+        });
+
+        // Add timestamp outside cache
+        $data['timestamp'] = now()->timestamp;
+
+        return response()->json($data);
     }
 
     public function tv()
