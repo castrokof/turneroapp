@@ -179,6 +179,8 @@ class DisplayController extends Controller
 
         $settings = [
             'business_name' => SystemSetting::get('business_name', 'Sistema de Turnos'),
+            'tv_logo_url' => SystemSetting::get('tv_logo_url', ''),
+            'kiosk_message' => SystemSetting::get('kiosk_message', ''),
         ];
 
         return view('display.kiosk', compact('serviceTypes', 'settings'));

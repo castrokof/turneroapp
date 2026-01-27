@@ -61,12 +61,12 @@
                                               name="settings[{{ $setting->key }}]"
                                               rows="2">{{ is_array($setting->value) ? json_encode($setting->value) : $setting->value }}</textarea>
                                     <small class="form-text text-muted">Formato JSON</small>
-                                @elseif($setting->key === 'tv_message')
+                                @elseif($setting->key === 'tv_message' || $setting->key === 'kiosk_message')
                                     <textarea class="form-control"
                                               id="settings_{{ $setting->key }}"
                                               name="settings[{{ $setting->key }}]"
-                                              rows="3"
-                                              placeholder="Ej: Bienvenidos a nuestra clínica. Por favor espere su turno.">{{ $setting->value }}</textarea>
+                                              rows="2"
+                                              placeholder="{{ $setting->key === 'kiosk_message' ? 'Ej: Bienvenidos a nuestra clínica' : 'Ej: Bienvenidos. Por favor espere su turno.' }}">{{ $setting->value }}</textarea>
                                 @elseif($setting->key === 'tv_logo_url' || $setting->key === 'tv_video_url')
                                     <input type="text" class="form-control"
                                            id="settings_{{ $setting->key }}"
