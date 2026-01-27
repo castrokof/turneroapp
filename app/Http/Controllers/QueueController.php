@@ -245,8 +245,8 @@ private function generateTicketText($queue, $serviceType, $pendingCount)
     }
 private function isWithinBusinessHours()
 {
-    $openingTime = SystemSetting::get('opening_time', '08:00');
-    $closingTime = SystemSetting::get('closing_time', '17:00');
+    $openingTime = SystemSetting::get('opening_time', '07:00');
+    $closingTime = SystemSetting::get('closing_time', '18:00');
 
     $now = now();
     $opening = now()->setTimeFromTimeString($openingTime);

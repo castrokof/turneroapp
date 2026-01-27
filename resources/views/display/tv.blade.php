@@ -27,7 +27,7 @@
         .video-area {
             flex: 1;
             position: relative;
-            background: #111;
+            background: #E7E7F8;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -301,6 +301,17 @@
             position: relative;
             z-index: 1;
         }
+
+        #videoContainer iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 177.77vh;   /* 16:9 */
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 56.25vw;
+    transform: translate(-50%, -50%);
+}
     </style>
 </head>
 <body>
@@ -317,28 +328,50 @@
 
             <!-- Video or Logo/Message content -->
             <div id="videoContainer">
-                @if(isset($settings['tv_video_url']) && $settings['tv_video_url'])
-                    <video id="backgroundVideo" autoplay muted loop playsinline>
-                        <source src="{{ $settings['tv_video_url'] }}" type="video/mp4">
-                    </video>
+    @if(!empty($settings['tv_video_url']))
+        @php
+            $url = $settings['tv_video_url'];
+
+            // Detectar YouTube
+            preg_match('/(youtu\.be\/|v=)([^&]+)/', $url, $matches);
+            $youtubeId = $matches[2] ?? null;
+        @endphp
+
+        @if($youtubeId)
+            {{-- YouTube --}}
+            <iframe
+                id="backgroundVideo"
+                src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&loop=1&playlist={{ $youtubeId }}"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        @else
+            {{-- Video MP4 --}}
+            <video id="backgroundVideo" autoplay muted loop playsinline>
+                <source src="{{ $url }}" type="video/mp4">
+            </video>
+        @endif
+    @else
+        {{-- Placeholder --}}
+        <div class="placeholder-content">
+            <div class="logo-container">
+                @if(!empty($settings['tv_logo_url']))
+                    <img src="{{ $settings['tv_logo_url'] }}" alt="Logo">
                 @else
-                    <div class="placeholder-content">
-                        <div class="logo-container">
-                            @if(isset($settings['tv_logo_url']) && $settings['tv_logo_url'])
-                                <img src="{{ $settings['tv_logo_url'] }}" alt="Logo">
-                            @else
-                                <i class="fas fa-hospital logo-placeholder"></i>
-                            @endif
-                        </div>
-                        @if(isset($settings['tv_message']) && $settings['tv_message'])
-                            <p class="tv-message">{{ $settings['tv_message'] }}</p>
-                        @else
-                            <p class="default-text">Bienvenido a {{ $settings['business_name'] }}</p>
-                            <small class="default-text">Sistema de Turnos</small>
-                        @endif
-                    </div>
+                    <i class="fas fa-hospital logo-placeholder"></i>
                 @endif
             </div>
+
+            @if(!empty($settings['tv_message']))
+                <p class="tv-message">{{ $settings['tv_message'] }}</p>
+            @else
+                <p class="default-text">Bienvenido a {{ $settings['business_name'] }}</p>
+                <small class="default-text">Sistema de Turnos</small>
+            @endif
+        </div>
+    @endif
+</div>
         </div>
 
         <!-- Queue Strip at Bottom -->
