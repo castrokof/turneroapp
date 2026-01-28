@@ -343,9 +343,76 @@
     min-height: 56.25vw;
     transform: translate(-50%, -50%);
 }
+
+        /* Activation Overlay */
+        .activation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            cursor: pointer;
+        }
+
+        .activation-overlay.hidden {
+            display: none;
+        }
+
+        .activation-content {
+            text-align: center;
+            color: #fff;
+        }
+
+        .activation-content i {
+            font-size: 8rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .activation-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .activation-content p {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .activation-content .click-hint {
+            margin-top: 2rem;
+            padding: 1rem 3rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            font-size: 1.2rem;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
+    <!-- Activation Overlay -->
+    <div class="activation-overlay" id="activationOverlay">
+        <div class="activation-content">
+            <i class="fas fa-volume-up"></i>
+            <h1>Pantalla de Turnos</h1>
+            <p>{{ $settings['business_name'] }}</p>
+            <div class="click-hint">
+                <i class="fas fa-hand-pointer mr-2"></i>
+                Haga clic para activar el sonido
+            </div>
+        </div>
+    </div>
+
     <div class="tv-container">
         <!-- Header Bar -->
         <div class="header-bar">
@@ -440,7 +507,7 @@
     </div>
 
     <audio id="notificationSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
+        <source src="{{ asset('sounds/iphone-notificacion.mp3') }}" type="audio/mpeg">
     </audio>
 
     <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
@@ -454,6 +521,23 @@
         let lastCalledTimestamp = 0;
         let modalTimeout = null;
         let countdownInterval = null;
+        let audioEnabled = false;
+
+        // Activation overlay - required for browser audio policy
+        document.getElementById('activationOverlay').addEventListener('click', function() {
+            // Test play audio to enable it
+            const audio = document.getElementById('notificationSound');
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                audioEnabled = true;
+            }).catch(() => {
+                audioEnabled = false;
+            });
+
+            // Hide overlay
+            this.classList.add('hidden');
+        });
 
         function updateClock() {
             const now = new Date();
@@ -487,16 +571,27 @@
         }
 
         function playNotification(ticketNumber, windowName) {
-            if (SOUND_ENABLED) {
-                document.getElementById('notificationSound').play();
+            // Play sound
+            if (SOUND_ENABLED && audioEnabled) {
+                const audio = document.getElementById('notificationSound');
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('Audio blocked:', e));
             }
 
+            // Text to speech
             if (VOICE_ENABLED && 'speechSynthesis' in window) {
+                // Cancel any pending speech
+                speechSynthesis.cancel();
+
                 const utterance = new SpeechSynthesisUtterance(`Turno ${ticketNumber}, pasar a ${windowName}`);
                 utterance.lang = 'es-ES';
                 utterance.rate = 0.8;
                 utterance.volume = 1;
-                speechSynthesis.speak(utterance);
+
+                // Small delay to let the notification sound play first
+                setTimeout(() => {
+                    speechSynthesis.speak(utterance);
+                }, 500);
             }
         }
 

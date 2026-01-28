@@ -220,6 +220,11 @@
                     <i class="fas fa-tablet-alt"></i> Kiosko
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo e(route('display.tv')); ?>" target="_blank">
+                    <i class="fas fa-tv"></i> TV
+                </a>
+            </li>
         </ul>
     </nav>
 

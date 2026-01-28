@@ -148,9 +148,53 @@
             font-size: 4rem;
             margin-bottom: 1rem;
         }
+
+        /* Activation Overlay */
+        .activation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            cursor: pointer;
+        }
+        .activation-overlay.hidden { display: none; }
+        .activation-content { text-align: center; }
+        .activation-content i { font-size: 6rem; margin-bottom: 1.5rem; animation: pulse 2s infinite; }
+        .activation-content h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .activation-content p { font-size: 1.2rem; opacity: 0.7; }
+        .activation-content .click-hint {
+            margin-top: 1.5rem;
+            padding: 0.8rem 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            animation: bounce 1s infinite;
+        }
+        @keyframes  bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
     </style>
 </head>
 <body>
+    <!-- Activation Overlay -->
+    <div class="activation-overlay" id="activationOverlay">
+        <div class="activation-content">
+            <i class="fas fa-volume-up"></i>
+            <h1>Pantalla de Turnos</h1>
+            <p><?php echo e($settings['business_name']); ?></p>
+            <div class="click-hint">
+                <i class="fas fa-hand-pointer mr-2"></i>
+                Clic para activar sonido
+            </div>
+        </div>
+    </div>
+
     <div class="header">
         <h1><i class="fas fa-ticket-alt mr-3"></i><?php echo e($settings['business_name']); ?></h1>
         <div class="clock" id="clock">--:--:--</div>
@@ -195,7 +239,7 @@
 
     <!-- Audio for notification -->
     <audio id="notificationSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
+        <source src="<?php echo e(asset('sounds/notification.mp3')); ?>" type="audio/mpeg">
     </audio>
 
     <script src="<?php echo e(asset('js/jquery-3.6.0.min.js')); ?>"></script>
@@ -207,6 +251,20 @@
 
         let lastCalledId = null;
         let lastCalledTimestamp = 0;
+        let audioEnabled = false;
+
+        // Activation overlay
+        document.getElementById('activationOverlay').addEventListener('click', function() {
+            const audio = document.getElementById('notificationSound');
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                audioEnabled = true;
+            }).catch(() => {
+                audioEnabled = false;
+            });
+            this.classList.add('hidden');
+        });
 
         function updateClock() {
             const now = new Date();
@@ -214,15 +272,18 @@
         }
 
         function playNotification(ticketNumber, windowName) {
-            if (SOUND_ENABLED) {
-                document.getElementById('notificationSound').play();
+            if (SOUND_ENABLED && audioEnabled) {
+                const audio = document.getElementById('notificationSound');
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('Audio blocked'));
             }
 
             if (VOICE_ENABLED && 'speechSynthesis' in window) {
+                speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(`Turno ${ticketNumber}, ${windowName}`);
                 utterance.lang = 'es-ES';
                 utterance.rate = 0.9;
-                speechSynthesis.speak(utterance);
+                setTimeout(() => speechSynthesis.speak(utterance), 500);
             }
         }
 
