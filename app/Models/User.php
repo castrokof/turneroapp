@@ -61,6 +61,11 @@ class User extends Authenticatable
         return $this->role === 'agent';
     }
 
+    public function isSupervisor()
+    {
+        return $this->role === 'supervisor';
+    }
+
     public function isViewer()
     {
         return $this->role === 'viewer';

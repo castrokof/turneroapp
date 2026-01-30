@@ -23,6 +23,7 @@
                     <select name="role" class="form-control">
                         <option value="">Todos los roles</option>
                         <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
+                        <option value="supervisor" {{ request('role') === 'supervisor' ? 'selected' : '' }}>Supervisor</option>
                         <option value="agent" {{ request('role') === 'agent' ? 'selected' : '' }}>Agente</option>
                         <option value="viewer" {{ request('role') === 'viewer' ? 'selected' : '' }}>Visualizador</option>
                     </select>
@@ -67,6 +68,9 @@
                                 @switch($user->role)
                                     @case('admin')
                                         <span class="badge badge-danger">Administrador</span>
+                                        @break
+                                    @case('supervisor')
+                                        <span class="badge badge-warning">Supervisor</span>
                                         @break
                                     @case('agent')
                                         <span class="badge badge-primary">Agente</span>

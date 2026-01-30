@@ -59,6 +59,7 @@
                         <select name="role" id="role" class="form-control @error('role') is-invalid @enderror" required
                                 {{ $user->id === auth()->id() ? 'disabled' : '' }}>
                             <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Administrador</option>
+                            <option value="supervisor" {{ old('role', $user->role) === 'supervisor' ? 'selected' : '' }}>Supervisor</option>
                             <option value="agent" {{ old('role', $user->role) === 'agent' ? 'selected' : '' }}>Agente</option>
                             <option value="viewer" {{ old('role', $user->role) === 'viewer' ? 'selected' : '' }}>Visualizador</option>
                         </select>

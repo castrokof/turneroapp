@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboardController;
+use App\Http\Controllers\Supervisor\DashboardController as SupervisorDashboardController;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\DisplayController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::get('/', function () {
         $user = auth()->user();
         if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard');
+        } elseif ($user->isSupervisor()) {
+            return redirect()->route('supervisor.dashboard');
         } elseif ($user->isAgent()) {
             return redirect()->route('agent.dashboard');
         }
@@ -99,6 +102,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::post('/reports', [ReportController::class, 'generate'])->name('reports.generate');
     Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
     Route::get('/reports/chart', [ReportController::class, 'chartData'])->name('reports.chart');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Supervisor Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('supervisor')->name('supervisor.')->middleware(['auth', 'role:admin,supervisor'])->group(function () {
+    Route::get('/', [SupervisorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/agent/{agent}', [SupervisorDashboardController::class, 'agentDetail'])->name('agent-detail');
 });
 
 /*

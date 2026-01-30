@@ -57,6 +57,7 @@
                         <select name="role" id="role" class="form-control @error('role') is-invalid @enderror" required>
                             <option value="">Seleccionar rol...</option>
                             <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
+                            <option value="supervisor" {{ old('role') === 'supervisor' ? 'selected' : '' }}>Supervisor</option>
                             <option value="agent" {{ old('role') === 'agent' ? 'selected' : '' }}>Agente</option>
                             <option value="viewer" {{ old('role') === 'viewer' ? 'selected' : '' }}>Visualizador</option>
                         </select>
@@ -65,8 +66,9 @@
                         @enderror
                         <small class="form-text text-muted">
                             <strong>Administrador:</strong> Acceso completo al sistema.<br>
+                            <strong>Supervisor:</strong> Revisa flujo de turnos y rendimiento de agentes.<br>
                             <strong>Agente:</strong> Puede atender turnos y gestionar clientes.<br>
-                            <strong>Visualizador:</strong> Solo puede ver las pantallas públicas.
+                            <strong>Visualizador:</strong> Solo puede ver las pantallas p&uacute;blicas.
                         </small>
                     </div>
 

@@ -195,8 +195,21 @@
                 </li>
                 <hr class="my-2 mx-3 bg-secondary">
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('supervisor.dashboard') }}">
+                        <i class="fas fa-user-shield"></i> Módulo Supervisor
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('agent.dashboard') }}">
                         <i class="fas fa-headset"></i> Módulo Agente
+                    </a>
+                </li>
+            @endif
+
+            @if(auth()->user()->isSupervisor())
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('supervisor.*') ? 'active' : '' }}" href="{{ route('supervisor.dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard Supervisor
                     </a>
                 </li>
             @endif
