@@ -687,6 +687,27 @@
         fetchData();
         setInterval(fetchData, REFRESH_RATE);
 
+        // Forzar loop del video (algunos navegadores no respetan el atributo loop)
+        const bgVideo = document.getElementById('backgroundVideo');
+        if (bgVideo) {
+            bgVideo.addEventListener('ended', function() {
+                this.currentTime = 0;
+                this.play();
+            });
+
+            // Si el video se pausa por alguna razón, reiniciarlo
+            bgVideo.addEventListener('pause', function() {
+                if (!this.ended) {
+                    this.play();
+                }
+            });
+
+            // Intentar reproducir si está pausado al cargar
+            bgVideo.addEventListener('loadeddata', function() {
+                this.play().catch(e => console.log('Autoplay blocked:', e));
+            });
+        }
+
         // Limpiar al recargar
 window.addEventListener('beforeunload', function() {
     if (window.currentNotificationAudio) {
